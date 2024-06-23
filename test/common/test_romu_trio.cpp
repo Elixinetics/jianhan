@@ -38,7 +38,6 @@ template<typename Prng> auto testPrng() -> bool {
     return chi_square < critical_value;
 }
 
-
 TEST_CASE("test the quality of random numbers") {
     static constexpr size_t TEST_ROUNDS = 50;
     static constexpr size_t MAX_FAILURES = 5;

@@ -26,7 +26,7 @@ end)
 target("tests", function ()
     set_kind("binary")
     add_files("src/**.cpp")
-    add_files("tests/**.cpp")
+    add_files("test/**.cpp")
     add_packages(
         "openmp", "fmt", "toml11",
         "doctest", "nanobench"
