@@ -1,5 +1,5 @@
-#ifndef JIANHAN_ROMU_TRIO_HPP
-#define JIANHAN_ROMU_TRIO_HPP
+#ifndef JIANHAN_ROMUTRIO_HPP
+#define JIANHAN_ROMUTRIO_HPP
 
 #include <random>
 
@@ -78,7 +78,7 @@ private:
     uint64_t z_state_{};
 
     auto warmup() -> void {
-        for (size_t i = 0; i < 11; ++i) {
+        for (size_t i = 0; i < 5; ++i) {
             operator()();
         }
     }
@@ -86,4 +86,4 @@ private:
 
 }
 
-#endif // JIANHAN_ROMU_TRIO_HPP
+#endif // JIANHAN_ROMUTRIO_HPP

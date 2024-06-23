@@ -3,6 +3,8 @@ set_version("0.0.1")
 
 add_rules("mode.release", "mode.debug")
 
+set_allowedmodes("release", "debug")
+set_allowedarchs("x86_64", "x64")
 set_languages("c99", "cxx23")
 set_optimize("fastest")
 set_fpmodels("fast")

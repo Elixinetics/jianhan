@@ -22,7 +22,7 @@ auto Util::findProjectDirectory() -> std::string {
         }
     }
 
-    // cannot find the root directory of project, quit
+    // cannot find the root directory of the project, exit
     throw FatalError("cannot find the root directory of project");
 }
 
@@ -47,7 +47,7 @@ auto Util::isKeyValueLegal(const KeyValue val) noexcept -> bool {
     return std::ranges::contains(SIGNITURES, val);
 }
 
-auto Util::isPositionLegal(Position pos) noexcept -> bool {
+auto Util::isPositionLegal(const Position pos) noexcept -> bool {
     return pos < KEY_COUNT;
 }
 
