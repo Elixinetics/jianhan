@@ -72,7 +72,8 @@ auto Layout::getPos(const KeyValue val) const noexcept -> Position {
 }
 
 auto Layout::toStr() const noexcept -> std::string {
-    return {keys_.begin(), keys_.end()};
+    auto vals = items_ |std::views::take(KEY_COUNT);
+    return {vals.begin(), vals.end()};
 }
 
 auto Layout::setKey(const KeyValue val, const Position pos) noexcept -> void {
@@ -92,9 +93,11 @@ auto Layout::swapKeyValues(const Position pos1, const Position pos2) noexcept ->
 }
 
 auto Layout::operator<=>(const Layout &other) const noexcept -> std::weak_ordering {
-    for (const auto [this_val, other_val] : std::views::zip(keys_, other.keys_)) {
-        if (this_val > other_val) { return std::weak_ordering::greater; }
+    for (const auto [this_val, other_val] : std::views::zip(
+             this->items_ | std::views::take(KEY_COUNT),
+             other.items_ | std::views::take(KEY_COUNT))) {
         if (this_val < other_val) { return std::weak_ordering::less; }
+        if (this_val > other_val) { return std::weak_ordering::greater; }
     }
     return std::weak_ordering::equivalent;
 }
@@ -108,19 +111,19 @@ auto Layout::valid() const noexcept -> bool {
 }
 
 auto Layout::arekeysLegal() const noexcept -> bool {
-    const bool all_key_codes_legal = std::ranges::all_of(
+    const bool are_key_codes_legal = std::ranges::all_of(
         POSITIONS, [this](const auto pos) -> bool {
             const KeyValue val = this->getVal(pos);
             return Util::isKeyValueLegal(val);
         }
     );
-    const bool all_positions_legal = std::ranges::all_of(
+    const bool are_positions_legal = std::ranges::all_of(
         KEY_CODES, [this](const auto val) -> bool {
             const Position pos = this->getPos(val);
             return Util::isPositionLegal(pos);
         }
     );
-    return all_key_codes_legal and all_positions_legal;
+    return are_key_codes_legal and are_positions_legal;
 }
 
 auto Layout::arekeysUnique() const noexcept -> bool {

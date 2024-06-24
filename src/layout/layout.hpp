@@ -43,8 +43,6 @@ protected:
     auto swapKeyValues(Position pos1, Position pos2) noexcept -> void;
 
 private:
-    std::span<const u8> keys_{items_.begin(), items_.begin() + KEY_COUNT};
-
     static auto varifyLayoutString(std::string_view str) -> void;
     static auto checkStringLength(std::string_view str) -> void;
     static auto checkCharLegalty(std::string_view str) -> void;

@@ -3,7 +3,7 @@
 
 #include "../../src/common/romu_trio.hpp"
 
-namespace jianhan::v0 {
+namespace jianhan::v0::tests {
 
 TEST_SUITE("Test RomuTrio") {
 

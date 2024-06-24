@@ -48,10 +48,8 @@ public:
     static auto pos2row(Position pos) noexcept -> Row;
 
 private:
-    static constexpr std::array<KeyValue, 4> SIGNITURES{',', '.', ';', '/'};
-
     using NecessaryFiles = std::pair<std::string, std::vector<std::string>>;
-    inline static const std::vector<NecessaryFiles> NECESSITIES{
+    inline static const std::vector<NecessaryFiles> NECESSARY_FILES{
         {"conf", {"layouts.toml"}},
     };
 

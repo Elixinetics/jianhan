@@ -27,7 +27,7 @@ auto Util::findProjectDirectory() -> std::string {
 }
 
 auto Util::haveAllNecessaryFiles(const std::filesystem::path &path) -> bool {
-    for (const auto &[dir_name, file_names] : NECESSITIES) {
+    for (const auto &[dir_name, file_names] : NECESSARY_FILES) {
         const std::filesystem::path sub_dir = path / dir_name;
         if (!exists(sub_dir) or !is_directory(sub_dir)) {
             return false;
@@ -43,8 +43,9 @@ auto Util::haveAllNecessaryFiles(const std::filesystem::path &path) -> bool {
 }
 
 auto Util::isKeyValueLegal(const KeyValue val) noexcept -> bool {
-    if ('A' <= val and val <= 'Z') { return true; }
-    return std::ranges::contains(SIGNITURES, val);
+    return ('A' <= val and val <= 'Z')
+           or val == ',' or val == '.'
+           or val == '/' or val == ';';
 }
 
 auto Util::isPositionLegal(const Position pos) noexcept -> bool {
