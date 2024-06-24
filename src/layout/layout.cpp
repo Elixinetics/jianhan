@@ -82,7 +82,7 @@ auto Layout::setKey(const KeyValue val, const Position pos) noexcept -> void {
     items_[pos] = val;
 }
 
-auto Layout::swapAPairOfKeys(const Position pos1, const Position pos2) noexcept -> void {
+auto Layout::swapKeyValues(const Position pos1, const Position pos2) noexcept -> void {
     assert(Util::isPositionLegal(pos1));
     assert(Util::isPositionLegal(pos2));
     const KeyValue val1 = getVal(pos1);

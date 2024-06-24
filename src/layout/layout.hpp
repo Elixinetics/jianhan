@@ -13,9 +13,6 @@ class Area;
 struct Key final {
     KeyValue val;
     Position pos;
-
-    Key() = delete;
-    Key(const KeyValue val, const Position pos): val(val), pos(pos) {}
 };
 
 class Layout {
@@ -43,10 +40,10 @@ protected:
     auto loadFromString(std::string_view str) -> void;
 
     auto setKey(KeyValue val, Position pos) noexcept -> void;
-    auto swapAPairOfKeys(Position pos1, Position pos2) noexcept -> void;
+    auto swapKeyValues(Position pos1, Position pos2) noexcept -> void;
 
 private:
-    std::span<u8> keys_{items_.begin(), items_.begin() + KEY_COUNT};
+    std::span<const u8> keys_{items_.begin(), items_.begin() + KEY_COUNT};
 
     static auto varifyLayoutString(std::string_view str) -> void;
     static auto checkStringLength(std::string_view str) -> void;
