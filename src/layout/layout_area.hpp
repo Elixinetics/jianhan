@@ -5,6 +5,8 @@
 
 namespace jianhan::v0::layout {
 
+using toml_t = toml::value;
+
 class Config;
 
 class Area final {
@@ -26,10 +28,13 @@ protected:
     const uz lim_;
     uz idx_;
 
+    auto reset(Prng &prng) noexcept -> void;
+
+    auto addKeyValue(KeyValue val) -> void;
+    auto addPosition(Position pos) -> void;
+
 private:
     explicit Area(uz size);
-
-    auto reset(Prng &prng) noexcept -> void;
 
     friend class Config;
 };

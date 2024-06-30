@@ -1,5 +1,4 @@
 #include <doctest/doctest.h>
-#include <fmt/core.h>
 
 #include "../../src/common/romu_trio.hpp"
 
@@ -39,8 +38,8 @@ template<typename Prng> auto testPrng() -> bool {
 }
 
 TEST_CASE("test the quality of random numbers") {
-    static constexpr size_t TEST_ROUNDS = 50;
-    static constexpr size_t MAX_FAILURES = 5;
+    static constexpr size_t TEST_ROUNDS = 100;
+    static constexpr size_t MAX_FAILURES = 15;
 
     size_t num_failures = 0;
     for (size_t i = 0; i < TEST_ROUNDS; ++i) {

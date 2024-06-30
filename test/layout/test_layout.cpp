@@ -4,9 +4,25 @@
 
 namespace jianhan::v0::tests {
 
+// #define SHOW_ERR_MSG
+
 TEST_SUITE("Test Layout") {
 
-using Err = std::exception;
+auto check(const std::string_view str) -> void {
+#ifdef SHOW_ERR_MSG
+    try {
+        Layout l(str);
+        REQUIRE(false); // should not reach here
+    } catch (const std::exception &e) {
+        fmt::println(stderr, "\n{}", e.what());
+    } catch (...) {
+        fmt::println(stderr, "\nunknown exception");
+        REQUIRE(false); // should not reach here
+    }
+#else
+    REQUIRE_THROWS_AS((Layout(str)), std::exception);
+#endif
+}
 
 TEST_CASE("test Layout(string) construction") {
 
@@ -16,17 +32,21 @@ TEST_CASE("test Layout(string) construction") {
         REQUIRE_NOTHROW(Layout("QWFPGJLUY;ARSTDHNEIOZXCVBKM,./")); // Colemak
     }
 
+    // Define the SHOW_ERR_MSG macroat the beginning of this file and recompile,
+    // if you would like to see the error messages of the following test cases.
+
     SUBCASE("fail") {
         // illegal string length (31)
         static const std::string s31 = "QWERTYUIOPASDFGHJKL;ZXCVBNM,.//";
-        REQUIRE_THROWS_AS((Layout(s31)), Err);
+        check(s31);
         // illegal key value (qwe)
         static const std::string qwe = "qweRTYUIOPASDFGHJKL;ZXCVBNM,./";
-        REQUIRE_THROWS_AS((Layout(qwe)), Err);
+        check(qwe);
         // dupolicated keys (QQQ)
         static const std::string qqq = "QQQRTYUIOPASDFGHJKL;ZXCVBNM,./";
-        REQUIRE_THROWS_AS((Layout(qqq)), Err);
+        check(qqq);
     }
+
 }
 
 TEST_CASE("test Layout verification") {
@@ -53,6 +73,7 @@ TEST_CASE("test Layout verification") {
         // fmt::println(stderr, "{}", l.toStr());
         REQUIRE_FALSE(l.valid());
     }
+
 }
 
 TEST_CASE("test Layout comparison") {
@@ -74,6 +95,7 @@ TEST_CASE("test Layout comparison") {
         CHECK_EQ(layouts[1], l2);
         CHECK_EQ(layouts[2], l3);
     }
+
 }
 
 }

@@ -1,0 +1,19 @@
+[[mutable_area]]
+val = ["Z", "X", "C", "V"]
+pos = [20, 21, 22, 23]
+
+[[fixed_key]]
+val = ";"
+pos = 9
+
+[[fixed_key]]
+val = ","
+pos = 27
+
+[[fixed_key]]
+val = "."
+pos = 28
+
+[[fixed_key]]
+val = "/"
+pos = 29

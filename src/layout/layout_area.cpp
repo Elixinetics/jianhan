@@ -2,13 +2,19 @@
 
 namespace jianhan::v0::layout {
 
+auto size_of_area = [](const toml_t &config) -> uz {
+    return config.at("val").size();
+};
+
 Area::Area(const toml_t &config)
-    : Area(config.at("val_set").size()) {
-    for (const toml_t &val : config.at("val_set").as_array()) {
-        key_codes_.emplace_back(val.as_string().str[0]);
+    : Area(size_of_area(config)) {
+    for (const toml_t &v : config.at("val").as_array()) {
+        const KeyValue val = v.as_string().str[0];
+        addKeyValue(val);
     }
-    for (const toml_t &pos : config.at("pos_set").as_array()) {
-        positions_.emplace_back(pos.as_integer());
+    for (const toml_t &p : config.at("pos").as_array()) {
+        const KeyValue pos = p.as_integer();
+        addPosition(pos);
     }
     // for comparisons
     std::ranges::sort(key_codes_);
@@ -21,6 +27,14 @@ Area::Area(const uz size)
     positions_.reserve(size);
 }
 
+auto Area::addKeyValue(const KeyValue val) -> void {
+    key_codes_.emplace_back(val);
+}
+
+auto Area::addPosition(const Position pos) -> void {
+    positions_.emplace_back(pos);
+}
+
 /**
  * @brief Randomly assign all the keys in the area.
  * @param layout: target layout.
@@ -29,9 +43,9 @@ Area::Area(const uz size)
  **/
 auto Area::assign(Layout &layout, Prng &prng) noexcept -> void {
     std::ranges::shuffle(positions_, prng);
-    for (const auto [val, pos] : std::views
-         ::zip(key_codes_, positions_)) {
-        layout.setKey(val, pos);
+    for (const auto [val, pos] // bind val and pos
+         : std::views::zip(key_codes_, positions_)) {
+        layout.setPosValPair(val, pos);
     }
 }
 
@@ -42,8 +56,8 @@ auto Area::assign(Layout &layout, Prng &prng) noexcept -> void {
  * @note This operation can break the object.
  **/
 auto Area::mutate(Layout &layout, Prng &prng) noexcept -> void {
-    // When all the positions have been visited,
-    // reshuffle pos_set_ and reset idx_ to 0.
+    // When all the owned positions have been visited,
+    // reshuffle positions_ and reset idx_ to 0.
     if (idx_ >= lim_) { reset(prng); }
 
     // Select two positions in the area, then

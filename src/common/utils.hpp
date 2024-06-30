@@ -36,7 +36,7 @@ static constexpr uz MAX_KEY_CODE = 92; // 90 -> 92
 
 class Util final {
 public:
-    static auto buildAbsPath(std::string_view sub_path) -> std::string;
+    static auto mkAbsPath(std::string_view sub_path) -> std::string;
 
     static auto isKeyValueLegal(KeyValue val) noexcept -> bool;
     static auto isPositionLegal(Position pos) noexcept -> bool;

@@ -30,36 +30,38 @@ public:
     auto operator==(const Layout &other) const noexcept -> bool;
 
 protected:
-    // Key values and positions are stored in a single array
-    // since they do not conflict while being indexed:
-    // Position 0 <= 29; KeyValue 44 <= 90.
-    std::array<u8, MAX_KEY_CODE> items_{};
+    // Key values and position numbers are stored in a single array
+    // since they do not conflict with each other while
+    // being indexed: Position <= 29, KeyValue >= 44.
+    std::array<u8, MAX_KEY_CODE> key_mappings_{};
 
     Layout();
 
     auto loadFromString(std::string_view str) -> void;
 
-    auto setKey(KeyValue val, Position pos) noexcept -> void;
+    auto setPosValPair(KeyValue val, Position pos) noexcept -> void;
+
     auto swapKeyValues(Position pos1, Position pos2) noexcept -> void;
 
 private:
     static auto varifyLayoutString(std::string_view str) -> void;
-    static auto checkStringLength(std::string_view str) -> void;
-    static auto checkCharLegalty(std::string_view str) -> void;
-    static auto checkUniqueness(std::string_view str) -> void;
 
     [[nodiscard]] auto arekeysLegal() const noexcept -> bool;
     [[nodiscard]] auto arekeysUnique() const noexcept -> bool;
 
-    class IllegalLytStr final : public FatalError {
+    class IllegalString final : public std::invalid_argument {
     public:
-        IllegalLytStr(
-            const std::string_view seq,
-            const std::string_view msg) noexcept
-            : FatalError(fmt::format(WHAT, seq, msg)) {}
+        IllegalString() = delete;
+        IllegalString(const std::string_view str,
+                      const std::string_view msg) noexcept
+            : invalid_argument(fmt::format(WHAT, str, msg)) {}
 
     private:
-        static constexpr auto WHAT = "illegal layout \"{:s}\": {:s}";
+        static constexpr auto WHAT{
+            "invalid argument in Layout(std::string_view): "
+            "illegal layout string \"{:s}\":\n"
+            "{:s}"
+        };
     };
 
     friend class layout::Manager;

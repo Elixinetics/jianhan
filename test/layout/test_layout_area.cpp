@@ -10,8 +10,8 @@ using namespace toml::literals::toml_literals;
 
 TEST_CASE("test layout::Area(toml) construction") {
     const auto config = u8R"(
-        val_set = ["A", "B", "C", "D"]
-        pos_set = [0, 1, 2, 3]
+        val = ["A", "B", "C", "D"]
+        pos = [0, 1, 2, 3]
     )"_toml;
     REQUIRE_NOTHROW((Area(config)));
 }
@@ -22,8 +22,8 @@ static const auto QWERTY = Layout(""
     "ZXCVBNM,./"
 );
 static const auto CONFIG = u8R"(
-    val_set = ["Q", "W", "E"]
-    pos_set = [0, 1, 2]
+    val = ["Q", "W", "E"]
+    pos = [0, 1, 2]
 )"_toml;
 static auto area = Area(CONFIG);
 static auto prng = Prng();

@@ -19,83 +19,74 @@ Layout::Layout(const std::string_view str) {
     loadFromString(str);
 }
 
-void Layout::loadFromString(const std::string_view str) {
-    for (const auto [i, ch] : str | std::views::enumerate) {
-        const auto val = static_cast<KeyValue>(ch);
-        const auto pos = static_cast<Position>(i);
-        setKey(val, pos);
-    }
-}
-
 auto Layout::varifyLayoutString(const std::string_view str) -> void {
-    checkStringLength(str);
-    checkCharLegalty(str);
-    checkUniqueness(str);
-}
-
-auto Layout::checkStringLength(const std::string_view str) -> void {
-    if (str.length() != KEY_COUNT) {
-        constexpr std::string_view what = "invalid sequence length: {:d}";
-        throw IllegalLytStr(str, fmt::format(what, str.length()));
+    // Check string length
+    if (const uz len = str.length(); len != KEY_COUNT) {
+        constexpr auto what{"incorrect length: expected {:d}, got {:d}"};
+        throw IllegalString(str, fmt::format(what, KEY_COUNT, len));
     }
-}
 
-auto Layout::checkCharLegalty(const std::string_view str) -> void {
+    // Check characters
     for (const char ch : str) {
         if (const auto v = static_cast<KeyValue>(ch); not Util::isKeyValueLegal(v)) {
-            constexpr std::string_view what = "invalid key val: '{:c}'";
-            throw IllegalLytStr(str, fmt::format(what, ch));
+            constexpr std::string_view what = "invalid key value: '{:c}'";
+            throw IllegalString(str, fmt::format(what, ch));
         }
     }
-}
 
-auto Layout::checkUniqueness(const std::string_view str) -> void {
+    // Check for duplicates
     std::bitset<MAX_KEY_CODE> existing_vals;
     for (const char ch : str) {
         if (const auto val = static_cast<KeyValue>(ch); existing_vals[val]) {
-            constexpr std::string_view what = "duplicate key val: '{:c}'";
-            throw IllegalLytStr(str, fmt::format(what, ch));
+            constexpr std::string_view what = "duplicate key values: '{:c}'";
+            throw IllegalString(str, fmt::format(what, ch));
         } else [[likely]] {
             existing_vals.set(val);
         }
     }
 }
 
+void Layout::loadFromString(const std::string_view str) {
+    for (const auto [i, ch] : str | std::views::enumerate) {
+        const auto val = static_cast<KeyValue>(ch);
+        const auto pos = static_cast<Position>(i);
+        setPosValPair(val, pos);
+    }
+}
+
 auto Layout::getVal(const Position pos) const noexcept -> KeyValue {
     assert(Util::isPositionLegal(pos));
-    return items_[pos];
+    return key_mappings_[pos];
 }
 
 auto Layout::getPos(const KeyValue val) const noexcept -> Position {
     assert(Util::isKeyValueLegal(val));
-    return items_[val];
+    return key_mappings_[val];
 }
 
 auto Layout::toStr() const noexcept -> std::string {
-    auto vals = items_ |std::views::take(KEY_COUNT);
-    return {vals.begin(), vals.end()};
+    auto key_vals = key_mappings_ | std::views::take(KEY_COUNT);
+    return {key_vals.begin(), key_vals.end()};
 }
 
-auto Layout::setKey(const KeyValue val, const Position pos) noexcept -> void {
+auto Layout::setPosValPair(const KeyValue val, const Position pos) noexcept -> void {
     assert(Util::isKeyValueLegal(val));
     assert(Util::isPositionLegal(pos));
-    items_[val] = pos;
-    items_[pos] = val;
+    key_mappings_[val] = pos;
+    key_mappings_[pos] = val;
 }
 
 auto Layout::swapKeyValues(const Position pos1, const Position pos2) noexcept -> void {
     assert(Util::isPositionLegal(pos1));
     assert(Util::isPositionLegal(pos2));
-    const KeyValue val1 = getVal(pos1);
-    const KeyValue val2 = getVal(pos2);
-    std::swap(items_[val1], items_[val2]);
-    std::swap(items_[pos1], items_[pos2]);
+    std::swap(key_mappings_[pos1], key_mappings_[pos2]);
+    std::swap(key_mappings_[getVal(pos1)], key_mappings_[getVal(pos2)]);
 }
 
 auto Layout::operator<=>(const Layout &other) const noexcept -> std::weak_ordering {
     for (const auto [this_val, other_val] : std::views::zip(
-             this->items_ | std::views::take(KEY_COUNT),
-             other.items_ | std::views::take(KEY_COUNT))) {
+             this->key_mappings_ | std::views::take(KEY_COUNT),
+             other.key_mappings_ | std::views::take(KEY_COUNT))) {
         if (this_val < other_val) { return std::weak_ordering::less; }
         if (this_val > other_val) { return std::weak_ordering::greater; }
     }
@@ -103,7 +94,7 @@ auto Layout::operator<=>(const Layout &other) const noexcept -> std::weak_orderi
 }
 
 auto Layout::operator==(const Layout &other) const noexcept -> bool {
-    return this->items_ == other.items_;
+    return this->key_mappings_ == other.key_mappings_;
 }
 
 auto Layout::valid() const noexcept -> bool {
@@ -111,25 +102,25 @@ auto Layout::valid() const noexcept -> bool {
 }
 
 auto Layout::arekeysLegal() const noexcept -> bool {
-    const bool are_key_codes_legal = std::ranges::all_of(
-        POSITIONS, [this](const auto pos) -> bool {
-            const KeyValue val = this->getVal(pos);
-            return Util::isKeyValueLegal(val);
-        }
-    );
-    const bool are_positions_legal = std::ranges::all_of(
-        KEY_CODES, [this](const auto val) -> bool {
-            const Position pos = this->getPos(val);
-            return Util::isPositionLegal(pos);
-        }
-    );
-    return are_key_codes_legal and are_positions_legal;
+    return std::ranges::all_of( // Check key codes
+               POSITIONS, [this](const auto pos) -> bool {
+                   const KeyValue val = this->getVal(pos);
+                   return Util::isKeyValueLegal(val);
+               }
+           )
+           and
+           std::ranges::all_of( // Check positions
+               KEY_CODES, [this](const auto val) -> bool {
+                   const Position pos = this->getPos(val);
+                   return Util::isPositionLegal(pos);
+               }
+           );
 }
 
 auto Layout::arekeysUnique() const noexcept -> bool {
     std::bitset<MAX_KEY_CODE> already_observed(0);
 
-    // Check for duplicate key codes
+    // Check key code uniqueness
     for (const Position pos : POSITIONS) {
         const KeyValue val = getVal(pos);
         if (already_observed[val]) {
@@ -139,7 +130,7 @@ auto Layout::arekeysUnique() const noexcept -> bool {
         already_observed.set(val);
     }
 
-    // Check for duplicate positions
+    // Check position uniqueness
     for (const KeyValue val : KEY_CODES) {
         const Position pos = getPos(val);
         if (already_observed[pos]) {

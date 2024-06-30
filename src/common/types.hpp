@@ -27,8 +27,8 @@ For a standard QWERTY keyboard, it is the 3 * 10 grid as follows:
 
 namespace jianhan::v0 {
 
-using bf16 = std::bfloat16_t;
-using fpz = std::float32_t;
+using f16 = std::bfloat16_t;
+using fz = std::float32_t;
 using u8 = uint_fast8_t;
 using uz = size_t;
 
@@ -38,21 +38,6 @@ using Col = u8; // Column number, ∈ [0, 9]
 using Row = u8; // Row number, ∈ [0, 2]
 
 using Prng = RomuTrio64;
-
-using toml_t = toml::value;
-
-class FatalError : public std::exception {
-public:
-    FatalError() = delete;
-    explicit FatalError(const std::string_view msg) noexcept: msg_(msg) {}
-
-    [[nodiscard]] const char *what() const noexcept override {
-        return msg_.c_str();
-    }
-
-private:
-    std::string msg_;
-};
 
 }
 
