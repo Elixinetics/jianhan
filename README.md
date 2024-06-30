@@ -1,2 +1,2 @@
-# jianhan
-A simple keyboard layout optimizer for Hanyu Pinyin users, based on evolutionary alorithm.
+# 键函
+面向拼音输入法的键盘布局优化工具。
