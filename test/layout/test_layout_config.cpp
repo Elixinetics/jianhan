@@ -105,7 +105,7 @@ auto check(const toml_t &cfg) -> void {
 #endif
 }
 
-TEST_CASE("test layout::Config(toml) errors") {
+TEST_CASE("test layout::Config(toml) error cases") {
 
     // Define the SHOW_ERR_MSG macroat the beginning of this file and recompile,
     // if you would like to see the error messages of the following test cases.

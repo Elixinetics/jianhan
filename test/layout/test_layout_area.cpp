@@ -52,20 +52,21 @@ TEST_CASE("test layout::Area::assign()") {
     CHECK_LT(counter, EXPECTION + TOLERANCE);
 }
 
-auto numDifferentKeys(const Layout &l1, const Layout &l2) -> size_t {
-    uz count = 0;
-    for (uz i = 0; i < KEY_COUNT; ++i) {
-        if (l1.toStr()[i] != l2.toStr()[i]) {
-            ++count;
+static auto munOfDiffKeys(const Layout &lyt_1, const Layout &lyt_2) -> uz {
+    uz counter = 0;
+    for (auto [ch1, ch2]
+         : std::views::zip(lyt_1.toStr(), lyt_2.toStr())) {
+        if (ch1 != ch2) {
+            ++counter;
         }
     }
-    return count;
+    return counter;
 }
 
 TEST_CASE("test layout::Area::mutate()") {
     Layout layout(QWERTY);
     area.mutate(layout, prng);
-    CHECK_EQ(numDifferentKeys(layout, QWERTY), 2);
+    CHECK_EQ(munOfDiffKeys(layout, QWERTY), 2);
 }
 
 }

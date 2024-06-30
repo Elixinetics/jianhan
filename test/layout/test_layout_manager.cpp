@@ -24,7 +24,7 @@ TEST_CASE("test layout::Manager() construction") {
 
 static Manager manager;
 
-TEST_CASE("test layout::Manager::createLayout()") {
+TEST_CASE("test layout::Manager::create()") {
 
     // May fail due to too few variable keys
 
@@ -48,7 +48,7 @@ TEST_CASE("test layout::Manager::createLayout()") {
     CHECK_LT(num_duplicate_items, MAX_DUP);
 }
 
-TEST_CASE("show layout::Manager::createLayout()") {
+TEST_CASE("show layout::Manager::create()") {
     fmt::println("\nCreate 5 different layouts:");
     for (uz i = 1; i <= 5; i++) {
         Layout layout = manager.create();
@@ -175,7 +175,7 @@ TEST_CASE("show layout::Manager::mutate()") {
     }
 }
 
-TEST_CASE("test reinit() and mutate() errors") {
+TEST_CASE("test reinit() and mutate() assertions") {
 
     // Generate a layout that conflicts with the manager.
     // May fail if the layout has only one mutable area or
