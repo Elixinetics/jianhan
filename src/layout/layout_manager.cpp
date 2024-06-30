@@ -39,7 +39,7 @@ auto Manager::assignMutableKeys(Layout &layout) noexcept -> void {
  * @brief Shuffle all the keys in each mutable area.
  * @param layout: target layout.
  * @note - The target layout should be valid and manageable.
- *         Otherwise, the layout after mutation may not be valid.
+ *         Otherwise, the layout after reshuffle may not be valid.
  * @note - This function may cause undefined behavior if target layout
  *         is not valid or unmanagable, for the argument is not checked.
  **/
@@ -55,7 +55,7 @@ auto Manager::reinit(Layout &layout) noexcept -> void {
  * @param parent: parent layout.
  * @note - The target layout can be invalid or unmanagable.
  * @note - The parent layout should be valid and manageable.
- *         Otherwise, the target after mutation may not be valid.
+ *         Otherwise, the layout after mutation may not be valid.
  * @note - This function may cause undefined behavior if parent layout
  *         is not valid or unmanagable, for the arguments are not checked.
  **/
